@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>World Clock - Prominent Time Zones</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+    h1 {
+      text-align: center;
+      color: #fff;
+      margin-top: 24px;
+      margin-bottom: 16px;
+      font-size: 2.2rem;
+      letter-spacing: 2px;
+      text-shadow: 2px 2px 8px #ff6a00a0;
+    }
+    .top-bar {
+      width: 100vw;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: linear-gradient(90deg, #ffb347 0%, #ffcc33 100%);
+      z-index: 10;
+      height: 48px;
+      box-shadow: 0 2px 8px #ffb34740;
+    }
+    .open-form-btn {
+      margin-right: 18px;
+      margin-top: 4px;
+      background: #ff6a00;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      box-shadow: 0 2px 8px #ff6a0030;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .open-form-btn:hover {
+      background: #ff9800;
+    }
+    .form-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.35);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .form-modal.active {
+      display: flex;
+    }
+    .form-content {
+      background: #fff;
+      border-radius: 16px;
+      padding: 28px 18px 18px 18px;
+      min-width: 280px;
+      max-width: 90vw;
+      box-shadow: 0 8px 32px #ff980040;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      animation: popin 0.2s;
+    }
+    @keyframes popin {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .close-form-btn {
+      position: absolute;
+      top: 10px;
+      right: 14px;
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      color: #ff6a00;
+      cursor: pointer;
+    }
+    .form-content label {
+      font-weight: bold;
+      margin-top: 10px;
+      margin-bottom: 4px;
+      color: #ff6a00;
+      display: block;
+      text-align: left;
+      width: 100%;
+    }
+    .form-content input[type="date"],
+    .form-content input[type="time"],
+    .form-content select {
+      width: 100%;
+      padding: 7px 8px;
+      border-radius: 6px;
+      border: 1px solid #ffb347;
+      margin-bottom: 10px;
+      font-size: 1rem;
+      background: #fffbe8;
+      color: #333;
+    }
+    .form-content button[type="submit"] {
+      margin-top: 12px;
+      background: #ff6a00;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 28px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      box-shadow: 0 2px 8px #ff6a0030;
+      transition: background 0.2s;
+    }
+    .form-content button[type="submit"]:hover {
+      background: #ff9800;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      padding: 16px;
+      max-width: 500px;
+      margin: 64px auto 0 auto;
+    }
+    .timezone {
+      background: linear-gradient(120deg, #f7971e 0%, #ffd200 100%);
+      border-radius: 18px;
+      box-shadow: 0 4px 16px rgba(255, 106, 0, 0.15);
+      padding: 20px 16px 16px 16px;
+      min-width: 90vw;
+      max-width: 420px;
+      text-align: center;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .zone-img {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+      border-radius: 50%;
+      margin-bottom: 8px;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 8px #ff6a0030;
+      background: #fff;
+    }
+    .zone-name {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #ff6a00;
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+      text-shadow: 1px 1px 4px #fff7;
+    }
+    .datetime {
+      font-size: 1.1rem;
+      color: #333;
+      letter-spacing: 1px;
+      background: #fff8;
+      border-radius: 8px;
+      padding: 8px 0;
+      width: 100%;
+      margin-top: 4px;
+      font-family: 'Roboto Mono', monospace;
+    }
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.3rem;
+        margin-top: 56px;
+      }
+      .container {
+        gap: 16px;
+        padding: 8px;
+        margin-top: 60px;
+      }
+      .timezone {
+        min-width: 96vw;
+        max-width: 98vw;
+        padding: 14px 4px 10px 4px;
+      }
+      .zone-img {
+        width: 36px;
+        height: 36px;
+      }
+      .zone-name {
+        font-size: 1rem;
+      }
+      .datetime {
+        font-size: 0.98rem;
+        padding: 6px 0;
+      }
+      .form-content {
+        min-width: 90vw;
+        padding: 18px 4vw 12px 4vw;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <button class="open-form-btn" id="openFormBtn" title="Convert Date/Time">
+      <span>⏰</span>
+    </button>
+  </div>
+  <h1>🌏 World Clock</h1>
+  <div class="form-modal" id="formModal">
+    <form class="form-content" id="convertForm" autocomplete="off">
+      <button type="button" class="close-form-btn" id="closeFormBtn" title="Close">&times;</button>
+      <label for="dateInput">Select Date</label>
+      <input type="date" id="dateInput" required>
+      <label for="timeInput">Select Time</label>
+      <input type="time" id="timeInput" required step="1">
+      <label for="tzInput">Select Timezone</label>
+      <select id="tzInput" required>
+        <option value="Asia/Kolkata">IST (India)</option>
+        <option value="America/Chicago">CST (US Central)</option>
+        <option value="America/Los_Angeles">PST (US Pacific)</option>
+        <option value="America/Denver">MST (US Mountain)</option>
+        <option value="America/New_York">EST (US Eastern)</option>
+      </select>
+      <button type="submit">Convert</button>
+    </form>
+  </div>
+  <div style="text-align:center; margin-top:10px;">
+    <button id="resetBtn" style="background:#ffb347;color:#fff;border:none;border-radius:8px;padding:8px 20px;cursor:pointer;font-size:1rem;box-shadow:0 2px 8px #ffb34740;">Reset to Current Time</button>
+  </div>
+  <div class="container" id="timeContainer">
+    <div class="timezone">
+      <img class="zone-img" src="https://upload.wikimedia.org/wikipedia/commons/4/41/Flag_of_India.svg" alt="India Flag">
+      <div class="zone-name">IST (India)</div>
+      <div class="datetime" id="ist"></div>
+    </div>
+    <div class="timezone">
+      <img class="zone-img" src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Flag_of_the_United_States.svg" alt="USA Flag">
+      <div class="zone-name">CST (US Central)</div>
+      <div class="datetime" id="cst"></div>
+    </div>
+    <div class="timezone">
+      <img class="zone-img" src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Flag_of_the_United_States.svg" alt="USA Flag">
+      <div class="zone-name">PST (US Pacific)</div>
+      <div class="datetime" id="pst"></div>
+    </div>
+    <div class="timezone">
+      <img class="zone-img" src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Flag_of_the_United_States.svg" alt="USA Flag">
+      <div class="zone-name">MST (US Mountain)</div>
+      <div class="datetime" id="mst"></div>
+    </div>
+    <div class="timezone">
+      <img class="zone-img" src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Flag_of_the_United_States.svg" alt="USA Flag">
+      <div class="zone-name">EST (US Eastern)</div>
+      <div class="datetime" id="est"></div>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.43/moment-timezone-with-data.min.js"></script>
+  <script>
+  // Modal logic
+  const openFormBtn = document.getElementById('openFormBtn');
+  const closeFormBtn = document.getElementById('closeFormBtn');
+  const formModal = document.getElementById('formModal');
+  const convertForm = document.getElementById('convertForm');
+  const dateInput = document.getElementById('dateInput');
+  const timeInput = document.getElementById('timeInput');
+  const tzInput = document.getElementById('tzInput');
+  let customDate = null;
+  let customTz = 'Asia/Kolkata';
+
+  openFormBtn.onclick = () => {
+    formModal.classList.add('active');
+    // Set default date/time to now
+    const now = moment();
+    dateInput.value = now.format('YYYY-MM-DD');
+    timeInput.value = now.format('HH:mm:ss');
+    tzInput.value = customTz;
+  };
+  closeFormBtn.onclick = () => {
+    formModal.classList.remove('active');
+  };
+  formModal.onclick = (e) => {
+    if (e.target === formModal) formModal.classList.remove('active');
+  };
+
+  tzInput.onchange = () => {
+    customTz = tzInput.value;
+  };
+
+  function format(dt, tz) {
+    const m = moment.tz(dt, tz);
+    const weekday = m.format('dddd');
+    const dateTime = m.format('MMMM DD, YYYY, hh:mm:ss A');
+    return `<b>${weekday}</b>, ${dateTime}`;
+  }
+
+  function getBaseDateFromInputs(date, time, tz) {
+    // Combine date and time, then parse in selected timezone
+    // Example: 2024-07-10, 13:45:00, Asia/Kolkata
+    const dateTimeStr = `${date} ${time}`;
+    // Parse as local time in selected timezone, then convert to Date
+    return moment.tz(dateTimeStr, 'YYYY-MM-DD HH:mm:ss', tz).toDate();
+  }
+
+  function updateClocks() {
+    let baseDate;
+    if (customDate) {
+      baseDate = getBaseDateFromInputs(dateInput.value, timeInput.value, customTz);
+    } else {
+      baseDate = new Date();
+    }
+    document.getElementById('ist').innerHTML = format(baseDate, 'Asia/Kolkata');
+    document.getElementById('cst').innerHTML = format(baseDate, 'America/Chicago');
+    document.getElementById('pst').innerHTML = format(baseDate, 'America/Los_Angeles');
+    document.getElementById('mst').innerHTML = format(baseDate, 'America/Denver');
+    document.getElementById('est').innerHTML = format(baseDate, 'America/New_York');
+  }
+
+  // Live update only if not custom
+  setInterval(() => {
+    if (!customDate) updateClocks();
+  }, 1000);
+
+  updateClocks();
+
+  convertForm.onsubmit = function(e) {
+    e.preventDefault();
+    const date = dateInput.value;
+    const time = timeInput.value;
+    if (!date || !time) return;
+    customDate = true; // Just a flag to indicate custom mode
+    customTz = tzInput.value;
+    updateClocks();
+    formModal.classList.remove('active');
+  };
+
+  // Reset button logic
+  document.getElementById('resetBtn').onclick = () => {
+    customDate = null;
+    const now = moment();
+    dateInput.value = now.format('YYYY-MM-DD');
+    timeInput.value = now.format('HH:mm:ss');
+    tzInput.value = 'Asia/Kolkata';
+    customTz = 'Asia/Kolkata';
+    updateClocks();
+  };
+</script>
+  </body>
+  </html>
