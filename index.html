@@ -259,175 +259,24 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.43/moment-timezone-with-data.min.js"></script>
   <script>
-const TIMEZONES = [
-  // America
-  { id: 'est', tz: 'America/New_York', name: 'EST (US Eastern)', img: 'https://flagcdn.com/w40/us.png', alt: 'USA Flag' },
-  { id: 'cst', tz: 'America/Chicago', name: 'CST (US Central)', img: 'https://flagcdn.com/w40/us.png', alt: 'USA Flag' },
-  { id: 'mst', tz: 'America/Denver', name: 'MST (US Mountain)', img: 'https://flagcdn.com/w40/us.png', alt: 'USA Flag' },
-  { id: 'pst', tz: 'America/Los_Angeles', name: 'PST (US Pacific)', img: 'https://flagcdn.com/w40/us.png', alt: 'USA Flag' },
-  { id: 'brazil', tz: 'America/Sao_Paulo', name: 'BRT (Brazil)', img: 'https://flagcdn.com/w40/br.png', alt: 'Brazil Flag' },
-  { id: 'mexico', tz: 'America/Mexico_City', name: 'CST (Mexico)', img: 'https://flagcdn.com/w40/mx.png', alt: 'Mexico Flag' },
-  // Europe
-  { id: 'uk', tz: 'Europe/London', name: 'GMT/BST (UK)', img: 'https://flagcdn.com/w40/gb.png', alt: 'UK Flag' },
-  { id: 'france', tz: 'Europe/Paris', name: 'CET/CEST (France)', img: 'https://flagcdn.com/w40/fr.png', alt: 'France Flag' },
-  { id: 'germany', tz: 'Europe/Berlin', name: 'CET/CEST (Germany)', img: 'https://flagcdn.com/w40/de.png', alt: 'Germany Flag' },
-  { id: 'italy', tz: 'Europe/Rome', name: 'CET/CEST (Italy)', img: 'https://flagcdn.com/w40/it.png', alt: 'Italy Flag' },
-  { id: 'spain', tz: 'Europe/Madrid', name: 'CET/CEST (Spain)', img: 'https://flagcdn.com/w40/es.png', alt: 'Spain Flag' },
-  { id: 'russia', tz: 'Europe/Moscow', name: 'MSK (Russia)', img: 'https://flagcdn.com/w40/ru.png', alt: 'Russia Flag' },
-  // Asia
-  { id: 'ist', tz: 'Asia/Kolkata', name: 'IST (India)', img: 'https://flagcdn.com/w40/in.png', alt: 'India Flag' },
-  { id: 'china', tz: 'Asia/Shanghai', name: 'CST (China)', img: 'https://flagcdn.com/w40/cn.png', alt: 'China Flag' },
-  { id: 'japan', tz: 'Asia/Tokyo', name: 'JST (Japan)', img: 'https://flagcdn.com/w40/jp.png', alt: 'Japan Flag' },
-  { id: 'singapore', tz: 'Asia/Singapore', name: 'SGT (Singapore)', img: 'https://flagcdn.com/w40/sg.png', alt: 'Singapore Flag' },
-  { id: 'uae', tz: 'Asia/Dubai', name: 'GST (UAE)', img: 'https://flagcdn.com/w40/ae.png', alt: 'UAE Flag' },
-  // Australia
-  { id: 'sydney', tz: 'Australia/Sydney', name: 'AEST/AEDT (Sydney)', img: 'https://flagcdn.com/w40/au.png', alt: 'Australia Flag' },
-  // Africa
-  { id: 'southafrica', tz: 'Africa/Johannesburg', name: 'SAST (South Africa)', img: 'https://flagcdn.com/w40/za.png', alt: 'South Africa Flag' },
-  { id: 'egypt', tz: 'Africa/Cairo', name: 'EET (Egypt)', img: 'https://flagcdn.com/w40/eg.png', alt: 'Egypt Flag' }
-];
-
-// Dynamically populate modal select options
-const tzInputModal = document.getElementById('tzInput');
-tzInputModal.innerHTML = TIMEZONES.map(z =>
-  `<option value="${z.tz}">${z.name}</option>`
-).join('');
-
-const STAR_KEY = 'starredTimezoneName';
-
-function getStarredTimezone() {
-  return localStorage.getItem(STAR_KEY) || '';
-}
-function setStarredTimezone(name) {
-  localStorage.setItem(STAR_KEY, name);
-}
-function clearStarredTimezone() {
-  localStorage.removeItem(STAR_KEY);
-}
-
-function renderTimezones() {
-  const container = document.getElementById('timeContainer');
-  container.innerHTML = '';
-  const starred = getStarredTimezone();
-  let zones = [...TIMEZONES];
-  if (starred) {
-    const idx = zones.findIndex(z => z.name === starred);
-    if (idx > -1) {
-      const [fav] = zones.splice(idx, 1);
-      zones.unshift(fav);
-    }
-  }
-  zones.forEach(zone => {
-    const div = document.createElement('div');
-    div.className = 'timezone';
-    div.innerHTML = `
+const TIMEZONES=[{id:'est',tz:'America/New_York',name:'EST (US Eastern)',img:'https://flagcdn.com/w40/us.png',alt:'USA Flag'},{id:'cst',tz:'America/Chicago',name:'CST (US Central)',img:'https://flagcdn.com/w40/us.png',alt:'USA Flag'},{id:'mst',tz:'America/Denver',name:'MST (US Mountain)',img:'https://flagcdn.com/w40/us.png',alt:'USA Flag'},{id:'pst',tz:'America/Los_Angeles',name:'PST (US Pacific)',img:'https://flagcdn.com/w40/us.png',alt:'USA Flag'},{id:'brazil',tz:'America/Sao_Paulo',name:'BRT (Brazil)',img:'https://flagcdn.com/w40/br.png',alt:'Brazil Flag'},{id:'mexico',tz:'America/Mexico_City',name:'CST (Mexico)',img:'https://flagcdn.com/w40/mx.png',alt:'Mexico Flag'},{id:'uk',tz:'Europe/London',name:'GMT/BST (UK)',img:'https://flagcdn.com/w40/gb.png',alt:'UK Flag'},{id:'france',tz:'Europe/Paris',name:'CET/CEST (France)',img:'https://flagcdn.com/w40/fr.png',alt:'France Flag'},{id:'germany',tz:'Europe/Berlin',name:'CET/CEST (Germany)',img:'https://flagcdn.com/w40/de.png',alt:'Germany Flag'},{id:'italy',tz:'Europe/Rome',name:'CET/CEST (Italy)',img:'https://flagcdn.com/w40/it.png',alt:'Italy Flag'},{id:'spain',tz:'Europe/Madrid',name:'CET/CEST (Spain)',img:'https://flagcdn.com/w40/es.png',alt:'Spain Flag'},{id:'russia',tz:'Europe/Moscow',name:'MSK (Russia)',img:'https://flagcdn.com/w40/ru.png',alt:'Russia Flag'},{id:'ist',tz:'Asia/Kolkata',name:'IST (India)',img:'https://flagcdn.com/w40/in.png',alt:'India Flag'},{id:'china',tz:'Asia/Shanghai',name:'CST (China)',img:'https://flagcdn.com/w40/cn.png',alt:'China Flag'},{id:'japan',tz:'Asia/Tokyo',name:'JST (Japan)',img:'https://flagcdn.com/w40/jp.png',alt:'Japan Flag'},{id:'singapore',tz:'Asia/Singapore',name:'SGT (Singapore)',img:'https://flagcdn.com/w40/sg.png',alt:'Singapore Flag'},{id:'uae',tz:'Asia/Dubai',name:'GST (UAE)',img:'https://flagcdn.com/w40/ae.png',alt:'UAE Flag'},{id:'sydney',tz:'Australia/Sydney',name:'AEST/AEDT (Sydney)',img:'https://flagcdn.com/w40/au.png',alt:'Australia Flag'},{id:'southafrica',tz:'Africa/Johannesburg',name:'SAST (South Africa)',img:'https://flagcdn.com/w40/za.png',alt:'South Africa Flag'},{id:'egypt',tz:'Africa/Cairo',name:'EET (Egypt)',img:'https://flagcdn.com/w40/eg.png',alt:'Egypt Flag'}];const tzInputModal=document.getElementById('tzInput');tzInputModal.innerHTML=TIMEZONES.map(z=>`<option value="${z.tz}">${z.name}</option>`).join('');const STAR_KEY='starredTimezoneName';function getStarredTimezone(){return localStorage.getItem(STAR_KEY)||''}
+function setStarredTimezone(name){localStorage.setItem(STAR_KEY,name)}
+function clearStarredTimezone(){localStorage.removeItem(STAR_KEY)}
+function renderTimezones(){const container=document.getElementById('timeContainer');container.innerHTML='';const starred=getStarredTimezone();let zones=[...TIMEZONES];if(starred){const idx=zones.findIndex(z=>z.name===starred);if(idx>-1){const[fav]=zones.splice(idx,1);zones.unshift(fav)}}
+zones.forEach(zone=>{const div=document.createElement('div');div.className='timezone';div.innerHTML=`
       <span class="star-btn" data-name="${zone.name}" title="Star this timezone" style="position:absolute;top:8px;left:10px;font-size:1.3rem;cursor:pointer;user-select:none;color:${starred===zone.name?'#1ec700':'#ccc'};">
         ${starred === zone.name ? '★' : '☆'}
       </span>
       <img class="zone-img" src="${zone.img}" alt="${zone.alt}">
       <div class="zone-name">${zone.name}</div>
       <div class="datetime" id="${zone.id}"></div>
-    `;
-    container.appendChild(div);
-  });
-  // Add event listeners for star buttons
-  document.querySelectorAll('.star-btn').forEach(btn => {
-    btn.onclick = function(e) {
-      const name = this.getAttribute('data-name');
-      if (getStarredTimezone() === name) {
-        clearStarredTimezone();
-      } else {
-        setStarredTimezone(name);
-      }
-      renderTimezones();
-      updateClocks();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-  });
-}
-
-function format(dt, tz) {
-  const m = moment.tz(dt, tz);
-  const weekday = m.format('dddd');
-  const dateTime = m.format('MMMM DD, YYYY, hh:mm:ss A');
-  return `<b>${weekday}</b>, ${dateTime}`;
-}
-
-function getBaseDateFromInputs(date, time, tz) {
-  const dateTimeStr = `${date} ${time}`;
-  return moment.tz(dateTimeStr, 'YYYY-MM-DD HH:mm:ss', tz).toDate();
-}
-
-let customDate = null;
-let customTz = 'Asia/Kolkata';
-
-function updateClocks() {
-  let baseDate;
-  if (customDate) {
-    baseDate = getBaseDateFromInputs(dateInput.value, timeInput.value, customTz);
-  } else {
-    baseDate = new Date();
-  }
-  TIMEZONES.forEach(zone => {
-    const el = document.getElementById(zone.id);
-    if (el) el.innerHTML = format(baseDate, zone.tz);
-  });
-}
-
-// Modal logic (unchanged)
-const openFormBtn = document.getElementById('openFormBtn');
-const closeFormBtn = document.getElementById('closeFormBtn');
-const formModal = document.getElementById('formModal');
-const convertForm = document.getElementById('convertForm');
-const dateInput = document.getElementById('dateInput');
-const timeInput = document.getElementById('timeInput');
-const tzInput = document.getElementById('tzInput');
-
-openFormBtn.onclick = () => {
-  formModal.classList.add('active');
-  const now = moment();
-  dateInput.value = now.format('YYYY-MM-DD');
-  timeInput.value = now.format('HH:mm:ss');
-  tzInput.value = customTz;
-};
-closeFormBtn.onclick = () => {
-  formModal.classList.remove('active');
-};
-formModal.onclick = (e) => {
-  if (e.target === formModal) formModal.classList.remove('active');
-};
-
-tzInput.onchange = () => {
-  customTz = tzInput.value;
-};
-
-setInterval(() => {
-  if (!customDate) updateClocks();
-}, 1000);
-
-convertForm.onsubmit = function(e) {
-  e.preventDefault();
-  const date = dateInput.value;
-  const time = timeInput.value;
-  if (!date || !time) return;
-  customDate = true;
-  customTz = tzInput.value;
-  updateClocks();
-  formModal.classList.remove('active');
-};
-
-document.getElementById('resetBtn').onclick = () => {
-  customDate = null;
-  const now = moment();
-  dateInput.value = now.format('YYYY-MM-DD');
-  timeInput.value = now.format('HH:mm:ss');
-  tzInput.value = 'Asia/Kolkata';
-  customTz = 'Asia/Kolkata';
-  updateClocks();
-};
-
-renderTimezones();
-updateClocks();
+    `;container.appendChild(div)});document.querySelectorAll('.star-btn').forEach(btn=>{btn.onclick=function(e){const name=this.getAttribute('data-name');if(getStarredTimezone()===name){clearStarredTimezone()}else{setStarredTimezone(name)}
+renderTimezones();updateClocks();window.scrollTo({top:0,behavior:'smooth'})}})}
+function format(dt,tz){const m=moment.tz(dt,tz);const weekday=m.format('dddd');const dateTime=m.format('MMMM DD, YYYY, hh:mm:ss A');return `<b>${weekday}</b>, ${dateTime}`}
+function getBaseDateFromInputs(date,time,tz){const dateTimeStr=`${date} ${time}`;return moment.tz(dateTimeStr,'YYYY-MM-DD HH:mm:ss',tz).toDate()}
+let customDate=null;let customTz='Asia/Kolkata';function updateClocks(){let baseDate;if(customDate){baseDate=getBaseDateFromInputs(dateInput.value,timeInput.value,customTz)}else{baseDate=new Date()}
+TIMEZONES.forEach(zone=>{const el=document.getElementById(zone.id);if(el)el.innerHTML=format(baseDate,zone.tz);})}
+const openFormBtn=document.getElementById('openFormBtn');const closeFormBtn=document.getElementById('closeFormBtn');const formModal=document.getElementById('formModal');const convertForm=document.getElementById('convertForm');const dateInput=document.getElementById('dateInput');const timeInput=document.getElementById('timeInput');const tzInput=document.getElementById('tzInput');openFormBtn.onclick=()=>{formModal.classList.add('active');const now=moment();dateInput.value=now.format('YYYY-MM-DD');timeInput.value=now.format('HH:mm:ss');tzInput.value=customTz};closeFormBtn.onclick=()=>{formModal.classList.remove('active')};formModal.onclick=(e)=>{if(e.target===formModal)formModal.classList.remove('active');};tzInput.onchange=()=>{customTz=tzInput.value};setInterval(()=>{if(!customDate)updateClocks();},1000);convertForm.onsubmit=function(e){e.preventDefault();const date=dateInput.value;const time=timeInput.value;if(!date||!time)return;customDate=!0;customTz=tzInput.value;updateClocks();formModal.classList.remove('active')};document.getElementById('resetBtn').onclick=()=>{customDate=null;const now=moment();dateInput.value=now.format('YYYY-MM-DD');timeInput.value=now.format('HH:mm:ss');tzInput.value='Asia/Kolkata';customTz='Asia/Kolkata';updateClocks()};renderTimezones();updateClocks()
   </script>
   <footer style="margin-top:40px; text-align:center; color:#ff6a00; font-size:1rem; background:rgba(255,255,255,0.7); padding:18px 0 10px 0; border-top:1px solid #ffd200;">
     Effortlessly convert any date and time between major world time zones.<br>
